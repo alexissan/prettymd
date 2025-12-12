@@ -111,6 +111,7 @@ prettymd fix <path> [options]
 | `--check` | Exit with error if changes needed (CI mode) | `prettymd fix *.md --check` |
 | `--diff` | Show color-coded diff of changes | `prettymd fix README.md --diff` |
 | `--mock` | Use mock client (no API required) | `prettymd fix test.md --mock` |
+| `--model <model>` | OpenAI model (gpt-4o-mini, gpt-3.5-turbo) | `prettymd fix doc.md --model gpt-3.5-turbo` |
 | `--help` | Show help information | `prettymd --help` |
 
 ### Output Modes
@@ -119,6 +120,14 @@ prettymd fix <path> [options]
 2. **In-Place**: Updates the file directly with `--in-place`
 3. **Diff View**: Shows changes with `--diff`
 4. **Check Mode**: Returns exit code 1 if changes needed with `--check`
+
+### Exit Codes
+
+| Code | Meaning | Use Case |
+|------|---------|----------|
+| `0` | Success - no changes needed or changes applied | Normal operation |
+| `1` | Changes detected (with `--check` flag) | CI/CD pipelines |
+| `2+` | Error occurred (file not found, API error, etc.) | Error handling |
 
 ## 💡 Use Cases
 
@@ -198,6 +207,7 @@ prettymd fix blog/my-post.md --style friendly --in-place
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | Your OpenAI API key | Required |
 | `PRETTYMD_STYLE` | Default style for formatting | `technical` |
+| `PRETTYMD_MODEL` | Default OpenAI model | `gpt-4o-mini` |
 
 ### Style Options
 
@@ -246,6 +256,27 @@ $ prettymd fix README.md --diff
 
 -this project does stuff
 +This project provides comprehensive functionality
+```
+
+## 💰 API Usage & Costs
+
+⚠️ **Cost Considerations:**
+
+- **Default Model**: Uses `gpt-4o-mini` (~$0.15 per 1M input tokens, ~$0.60 per 1M output tokens)
+- **Cheaper Option**: Use `--model gpt-3.5-turbo` for ~60% less cost
+- **Token Usage**: Average README uses ~500-2000 tokens (< $0.01 per file)
+- **Free Testing**: Use `--mock` mode to test without any API costs
+
+**Cost-saving tips:**
+```bash
+# Use cheaper model for bulk processing
+prettymd fix *.md --model gpt-3.5-turbo
+
+# Test with mock mode first
+prettymd fix README.md --mock --diff
+
+# Check before processing to avoid unnecessary API calls
+prettymd fix README.md --check
 ```
 
 ## 🔐 Privacy & Security

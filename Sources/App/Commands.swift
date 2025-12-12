@@ -38,6 +38,9 @@ struct Fix: AsyncParsableCommand {
     @Flag(name: .long, help: "Show diff between original and fixed content")
     var diff: Bool = false
 
+    @Option(name: .long, help: "OpenAI model to use (gpt-4o-mini, gpt-3.5-turbo)")
+    var model: String?
+
     mutating func run() async throws {
         // Validate file path
         let fileURL = URL(fileURLWithPath: path)
@@ -60,7 +63,8 @@ struct Fix: AsyncParsableCommand {
             guard let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] else {
                 throw ValidationError("OPENAI_API_KEY environment variable is required. Set it with: export OPENAI_API_KEY=\"sk-...\"")
             }
-            aiClient = try await AIClient.OpenAIClient(apiKey: apiKey)
+            let selectedModel = model ?? ProcessInfo.processInfo.environment["PRETTYMD_MODEL"]
+            aiClient = try await AIClient.OpenAIClient(apiKey: apiKey, model: selectedModel)
         }
 
         // Create and run fix manager

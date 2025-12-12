@@ -127,9 +127,18 @@ public enum FixError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .fileTooLarge(let size):
-            return "File too large: \(size) bytes (max: 100KB)"
+            let sizeKB = size / 1024
+            return """
+            File too large: \(sizeKB)KB (max: 100KB)
+
+            Try one of these options:
+            • Split the file into smaller sections
+            • Use --mock mode for testing without API calls
+            • Process sections individually
+            """
         case .contentTooLarge(let size):
-            return "Content too large: \(size) bytes (max: 100KB)"
+            let sizeKB = size / 1024
+            return "Content too large: \(sizeKB)KB (max: 100KB). Try splitting into smaller sections."
         case .invalidMarkdown:
             return "Invalid Markdown content"
         case .processingFailed(let message):

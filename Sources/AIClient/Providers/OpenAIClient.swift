@@ -7,7 +7,7 @@ import NIOHTTP1
 public class OpenAIClient: AIModelClient {
     private let apiKey: String
     private let httpClient: HTTPClient
-    private let model: String = "gpt-4o-mini"
+    private let model: String
     private let maxTokens: Int = 4000
     private let temperature: Double = 0.7
 
@@ -19,11 +19,13 @@ public class OpenAIClient: AIModelClient {
         return !apiKey.isEmpty
     }
 
-    public init(apiKey: String) async throws {
+    public init(apiKey: String, model: String? = nil) async throws {
         guard !apiKey.isEmpty else {
             throw AIClientError.apiKeyMissing
         }
         self.apiKey = apiKey
+        // Default to gpt-4o-mini for cost efficiency, allow override
+        self.model = model ?? "gpt-4o-mini"
         self.httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
     }
 
