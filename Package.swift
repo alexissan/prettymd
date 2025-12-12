@@ -11,33 +11,37 @@ let package = Package(
     products: [
         .executable(name: "prettymd", targets: ["App"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
+        .package(url: "https://github.com/swift-server/async-http-client", from: "1.20.0"),
+    ],
     targets: [
         .executableTarget(
             name: "App",
-            dependencies: ["Core", "AIClient", "Utils"],
+            dependencies: [
+                "Core",
+                "AIClient",
+                "Utils",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
+            ],
             path: "Sources/App"
         ),
         .target(
             name: "Core",
-            dependencies: ["Utils"],
+            dependencies: ["Utils", "AIClient"],
             path: "Sources/Core"
         ),
         .target(
             name: "AIClient",
-            dependencies: [],
+            dependencies: [
+                .product(name: "AsyncHTTPClient", package: "async-http-client")
+            ],
             path: "Sources/AIClient"
         ),
         .target(
             name: "Utils",
             dependencies: [],
             path: "Sources/Utils"
-        ),
-        .target(
-            name: "Templates",
-            path: "Sources/Templates",
-            resources: [
-                .process("README.md")
-            ]
         ),
         .testTarget(
             name: "prettymdTests",
